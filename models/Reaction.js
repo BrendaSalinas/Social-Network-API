@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const ReactionSchema = new Schema({
+const reactionSchema = new Schema({
     reactionId: {
         type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId()
@@ -9,6 +9,7 @@ const ReactionSchema = new Schema({
         type: String, 
         required: true, 
         //280 characters minimum 
+        maxlength: 280
     },
     username: {
         type: String,
@@ -16,10 +17,10 @@ const ReactionSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        get: timestamp => dateFormat(timestamp)
     }
 
 });
 
-const Reaction = model('Reaction', ReactionSchema);
-module.exports = Reaction;
+module.exports = reactionSchema;
