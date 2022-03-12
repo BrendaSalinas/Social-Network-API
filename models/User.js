@@ -5,7 +5,7 @@ const UserSchema = new Schema(
     username: {
       type: String,
       unique: true,
-      required: "Username is required",
+      required: 'Username is required',
       trim: true,
     },
     email: {
@@ -18,25 +18,29 @@ const UserSchema = new Schema(
     thoughts: [
       {
         type: Types.ObjectId,
-        ref: "Thought",
+        ref: 'Thought',
       },
     ],
     //Array of "_id" values referencing the User model (self-reference)
     friends: [
       {
         type: Types.ObjectId,
-        ref: "User",
+        ref: 'User',
       },
     ],
   },
   {
     toJSON: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     },
     id: false
   }
 );
 
-UserSchema.virtual('friendCount').get(()=> this.friends.length);
-const User = model("User", UserSchema);
+UserSchema.virtual('friendCount').get(function() {
+  return this.friends.length;
+});
+
+const User = model('User', UserSchema);
 module.exports = User;
