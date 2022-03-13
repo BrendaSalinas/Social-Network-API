@@ -42,5 +42,64 @@ const thoughtController = {
         })
         .catch(err => res.json(err));
     },
-    //
-}
+    //Update a thought by its _id PUT route
+    updateThought({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.id }, body, { new: true, runValidators: true }
+        )
+        .then(dbUpdatedThought => {
+            if(!dbUpdatedThought){
+                res.status(404).json({ message: 'No thought found with this id! '})
+                return;
+            }
+            res.json(dbUpdatedThought);
+        })
+        .catch(err => res.json(err));
+    },
+    //Remove a thought by its _id DELETE route
+    deleteThought({ params, body }, res) {
+        Thought.findOneAndDelete({ _id: params.id })
+        .then(dbDeletedThought => {
+            if(!dbDeletedThought) {
+                res.status(404).json({ message: 'No thought found with this id! '})
+                return;
+            }
+            res.json(dbDeletedThought);
+        })
+        .catch(err => res.json(err));
+    },
+    //Create a reaction stored in a single thought's reaction array field 
+    createReaction({ params, body}, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $push: { reactions: body } },
+            { new: true }
+        )
+        .then(dbThoughtData => {
+            if(!dbThoughtData) {
+                res.status(404).json({ message: 'No thought found with this id! '})
+                return;
+            }
+            res.json(dbThoughtData);
+        })
+        .catch(err => res.json(err));
+    },
+    //pull and remove a reaction by the reaction's reactionId value
+    removeReaction({ params }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: { reactions: { reactionId: params.reactionId }}},
+            { new: true }
+        )
+        .then(dbThoughData => {
+            if(!dbThoughData) {
+                res.status(404).json({ message: 'No thought found with this id! '});
+                return;
+            }
+            res.json(dbThoughData);
+        })
+        .catch(err => res.json(err));
+    }
+};
+
+module.exports = thoughtController;
